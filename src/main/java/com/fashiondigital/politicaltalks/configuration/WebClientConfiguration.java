@@ -17,18 +17,16 @@ import reactor.netty.tcp.TcpClient;
 public class WebClientConfiguration
 {
 	@Bean
-	  public WebClient defaultWebClient() {
-	
+	public WebClient defaultWebClient() {
 	    var tcpClient = TcpClient.create()
 	      .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2_000)
 	      .doOnConnected(connection ->
 	        connection.addHandlerLast(new ReadTimeoutHandler(2))
 	          .addHandlerLast(new WriteTimeoutHandler(2)));
-	
 	    return WebClient.builder()
 	      .clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient)))
-	      .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-	      .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+	      .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_ATOM_XML_VALUE)
+	      .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_ATOM_XML_VALUE)
 	      .build();
-	  }
+	}
 }
