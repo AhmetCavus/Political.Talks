@@ -5,29 +5,28 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import com.fashiondigital.politicaltalks.dto.TalkDto;
+
+import com.fashiondigital.politicaltalks.entity.TalkEntity;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 @Service
 public class TalksService {
 	
 	RestService restService;
-	FileService fileService;
-	CsvService<TalkDto> csvService;
+	CsvService<TalkEntity> csvService;
 	
 	public TalksService(
 			RestService restService, 
-			FileService fileService, 
-			CsvService<TalkDto> csvService) {
+			CsvService<TalkEntity> csvService) {
 		this.restService = restService;
-		this.fileService = fileService;
 		this.csvService = csvService;
 	}
 	
 	@Async("asyncExecutor")
-	public CompletableFuture<List<TalkDto>> request(String url) throws IOException {
+	public CompletableFuture<List<TalkEntity>> request(String url) throws IOException, CsvRequiredFieldEmptyException {
 		var rawTalkData = restService.requestRawString(url);
-		var csvPath = fileService.writeFile("tmp", ".csv", rawTalkData);
-		var listOfTalks = csvService.parseString(csvPath);
+		var csvPath = csvService.writeCsv("tmp", rawTalkData);
+		var listOfTalks = csvService.readCsv(csvPath);
 		return CompletableFuture.completedFuture(listOfTalks);
 	}
 }

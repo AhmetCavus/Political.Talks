@@ -7,12 +7,12 @@ import lombok.Data;
 @Data
 public class EvaluationModel {
 
-	private @Nullable String mostSpeeched;
+	private @Nullable String mostSpeeches;
 	private @Nullable String mostSecurity;
 	private @Nullable String leastWordy;
 	
-	public EvaluationModel(@Nullable String mostSpeeched, @Nullable String mostSecurity, @Nullable String leastWordy) {
-		this.mostSpeeched = mostSpeeched;
+	public EvaluationModel(@Nullable String mostSpeeches, @Nullable String mostSecurity, @Nullable String leastWordy) {
+		this.mostSpeeches = mostSpeeches;
 		this.mostSecurity = mostSecurity;
 		this.leastWordy = leastWordy;
 	}

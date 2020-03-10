@@ -4,14 +4,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.fashiondigital.politicaltalks.dto.TalkDto;
+import com.fashiondigital.politicaltalks.entity.TalkEntity;
 import com.fashiondigital.politicaltalks.model.TalkModel;
 
 @Configuration
@@ -23,19 +21,17 @@ public class MapperConfiguration {
 	}
 	
 	@Bean
-	public TypeMap<TalkDto, TalkModel> createTalkMapper(ModelMapper modelMapper) {
-		Converter<TalkDto, TalkModel> toTalkModel =
+	public TypeMap<TalkEntity, TalkModel> createTalkMapper(ModelMapper modelMapper) {
+		Converter<TalkEntity, TalkModel> toTalkModel =
 			    ctx -> ctx.getSource() == null ? null : createTalkModel(ctx.getSource());
-		
 	    var typeMap =
 			modelMapper
-			.createTypeMap(TalkDto.class, TalkModel.class)
+			.createTypeMap(TalkEntity.class, TalkModel.class)
 			.setConverter(toTalkModel);
-		
 	    return typeMap;
 	}
 	
-	private TalkModel createTalkModel(TalkDto talkDto) {
+	private TalkModel createTalkModel(TalkEntity talkDto) {
 		try {
 			var localDate = LocalDate.parse(talkDto.getLocalDate().strip());
 			return
