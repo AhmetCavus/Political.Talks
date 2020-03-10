@@ -1,13 +1,11 @@
 package com.fashiondigital.politicaltalks.dto;
 
-import java.time.LocalDate;
-
 import com.opencsv.bean.CsvBindByName;
 
 import lombok.Data;
 
 @Data
-public class SpeechDto {
+public class TalkDto {
 
 	@CsvBindByName(column = "Redner")
 	private String speaker;
@@ -19,15 +17,15 @@ public class SpeechDto {
 	private String localDate;
 	
 	@CsvBindByName(column = "Wörter")
-	private Long countOfWords;
+	private int countOfWords;
 	
-	public SpeechDto(String speaker, String subject, String localDate, Long countOfWords) {
+	public TalkDto(String speaker, String subject, String localDate, int countOfWords) {
 		this.speaker = speaker;
 		this.subject = subject;
 		this.localDate = localDate;
 		this.countOfWords = countOfWords;
 	}
 	
-	public SpeechDto() {}
+	public TalkDto() {}
 	
 }
