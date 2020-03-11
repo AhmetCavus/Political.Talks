@@ -4,28 +4,30 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.fashiondigital.politicaltalks.dto.TalkDto;
 import com.fashiondigital.politicaltalks.entity.TalkEntity;
 import com.fashiondigital.politicaltalks.service.CsvService;
+import com.fashiondigital.politicaltalks.service.CsvServiceImpl;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 
 @Configuration
 public class CsvReaderConfiguration
 {
 	@Bean
-	public TalkEntity createEntity() {
-		return new TalkEntity();
+	public TalkDto createDto() {
+		return new TalkDto();
 	}
 	
 	@Bean
-	public HeaderColumnNameMappingStrategy<TalkEntity> createMappingStrategy() {
-    	HeaderColumnNameMappingStrategy<TalkEntity> strategy = new HeaderColumnNameMappingStrategy<>();
-    	strategy.setType(TalkEntity.class);
+	public HeaderColumnNameMappingStrategy<TalkDto> createMappingStrategy() {
+    	HeaderColumnNameMappingStrategy<TalkDto> strategy = new HeaderColumnNameMappingStrategy<>();
+    	strategy.setType(TalkDto.class);
     	return strategy;
 	}
 	
 	@Bean
-	public CsvService<TalkEntity> createCsvService(@Qualifier("csvHeader") String csvHeader, HeaderColumnNameMappingStrategy<TalkEntity> mappingStrategy) {
-		return new CsvService<TalkEntity>(csvHeader, mappingStrategy);
+	public CsvService<TalkDto> createCsvService(@Qualifier("csvHeader") String csvHeader, HeaderColumnNameMappingStrategy<TalkDto> mappingStrategy) {
+		return new CsvServiceImpl<TalkDto>(csvHeader, mappingStrategy);
 	}
 	
 	@Bean(name = "csvHeader")
