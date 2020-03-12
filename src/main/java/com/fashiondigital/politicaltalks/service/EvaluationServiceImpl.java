@@ -47,7 +47,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 		var occurences = groupedEntries.values().stream().filter(count -> count == mostSpeechesEntry.getValue()).count();
 		String result = null;
 		if(occurences == 1) {
-			result = groupedEntries.keySet().iterator().next();
+			result = mostSpeechesEntry.getKey();
 		}
 		return result;
 	}
