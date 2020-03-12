@@ -1,5 +1,6 @@
 package com.fashiondigital.politicaltalks.service;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -33,35 +34,56 @@ public class EvaluationServiceImpl implements EvaluationService {
 	}
 	
 	String queryForMostSpeeches(List<TalkModel> talks) {
-		return query(talks, talk -> talk.getLocalDate().getYear() == queryYear);
+		var groupedEntries =
+			talks
+			.stream()
+			.filter(talk -> talk.getLocalDate().getYear() == queryYear)
+			.collect(Collectors.groupingBy(TalkModel::getSpeaker, Collectors.counting()));
+		String result = null;
+		if(!groupedEntries.isEmpty()) {
+			var maxValue = Collections.max(groupedEntries.values());
+			var occurences = groupedEntries.values().stream().filter(count -> count >= maxValue).count();
+			if(occurences == 1) {
+				result = groupedEntries.keySet().iterator().next();
+			}
+		}
+		return result;
 	}
 	
 	String queryForMostSecurity(List<TalkModel> talks) {
-		return query(talks, talk -> StringUtils.equals(talk.getSubject().strip(), querySubject));
+		var groupedEntries =
+			talks
+			.stream()
+			.filter(talk -> StringUtils.equals(talk.getSubject().strip(), querySubject))
+			.collect(Collectors.groupingBy(TalkModel::getSpeaker, Collectors.counting()));
+		String result = null;
+		if(!groupedEntries.isEmpty()) {
+			var maxValue = Collections.max(groupedEntries.values());
+			var occurences = groupedEntries.values().stream().filter(count -> count >= maxValue).count();
+			if(occurences == 1) {
+				result = groupedEntries.keySet().iterator().next();
+			}
+		}
+		return result;
 	}
 	
 	String queryForLeastWordy(List<TalkModel> talks) {
-		return
-			talks
-				.stream()
-				.collect(Collectors.groupingBy(TalkModel::getSpeaker, Collectors.summarizingInt(talk -> talk.getCountOfWords())))
-				.entrySet()
-				.stream()
-				.min(Comparator.comparingLong(entry -> entry.getValue().getSum()))
-				.map(Map.Entry::getKey)
-				.orElse(null);
-	}
-	
-	private String query(List<TalkModel> talks, Predicate<? super TalkModel> filterQuery) {
-		return
+		var groupedEntries =
 			talks
 			.stream()
-			.filter(filterQuery)
-			.collect(Collectors.groupingBy(TalkModel::getSpeaker, Collectors.counting()))
-			.entrySet()
-			.stream()
-			.max(Comparator.comparingInt(entry -> entry.getValue().intValue()))
-			.map(Map.Entry::getKey)
-			.orElse(null);
+			.collect(Collectors.groupingBy(TalkModel::getSpeaker, Collectors.summarizingInt(talk -> talk.getCountOfWords())));
+		String result = null;
+		if(!groupedEntries.isEmpty()) {
+			var minValue = 
+				groupedEntries
+				.values()
+				.stream()
+				.min(Comparator.comparingLong(stats -> stats.getSum()));
+			var occurences = groupedEntries.values().stream().filter(count -> count == minValue).count();
+			if(occurences == 1) {
+				result = groupedEntries.keySet().iterator().next();
+			}
+		}
+		return result;
 	}
 }

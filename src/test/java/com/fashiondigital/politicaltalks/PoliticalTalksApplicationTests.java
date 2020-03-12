@@ -8,6 +8,7 @@ class PoliticalTalksApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// TODO Integration test
 	}
 
 }
