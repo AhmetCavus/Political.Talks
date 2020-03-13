@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.fashiondigital.politicaltalks.dto.TalkDto;
-import com.fashiondigital.politicaltalks.entity.TalkEntity;
 import com.fashiondigital.politicaltalks.service.CsvService;
 import com.fashiondigital.politicaltalks.service.CsvServiceImpl;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;

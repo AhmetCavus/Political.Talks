@@ -16,6 +16,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.fashiondigital.politicaltalks.factory.TestDataFactory;
 import com.fashiondigital.politicaltalks.model.TalkModel;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,7 +26,7 @@ public class EvaluationServiceTest {
 	
 	@BeforeEach
 	public void Setup() {
-		talks = createDataForEvaluation();
+		talks = TestDataFactory.createModelDataForEvaluation();
 	}
 	
 	@ParameterizedTest
@@ -98,18 +99,5 @@ public class EvaluationServiceTest {
 		);
 	}
 	
-	private List<TalkModel> createDataForEvaluation() {
-		return
-		Arrays.asList(
-			new TalkModel("Alexander Abel", "Bildungspolitik", LocalDate.parse("2012-10-30"), 5310),	
-			new TalkModel("Bernhard Belling,", "Kohlesubventionen,", LocalDate.parse("2012-11-05"), 1210),	
-			new TalkModel("Caesare Collins", "Kohlesubventionen", LocalDate.parse("2012-11-06"), 1119),	
-			new TalkModel("Alexander Abel", "Innere Sicherheit", LocalDate.parse("2012-12-11"), 911),
-			new TalkModel("Max Mustermann", "Innere Sicherheit", LocalDate.parse("2014-12-11"), 10),
-			new TalkModel("Julian Mauer", "Kohlesubventionen", LocalDate.parse("2014-01-11"), 501),
-			new TalkModel("Max Mustermann", "Kohlesubventionen", LocalDate.parse("2015-01-04"), 20),
-			new TalkModel("Julian Mauer", "Finanzwesen", LocalDate.parse("2015-01-11"), 120),
-			new TalkModel("Max Mustermann", "Kohlesubventionen", LocalDate.parse("2016-01-09"), 30)
-		);
-	}
+	
 }

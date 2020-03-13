@@ -1,10 +1,11 @@
 package com.fashiondigital.politicaltalks.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.TypeMap;
 import com.fashiondigital.politicaltalks.dto.TalkDto;
+import com.fashiondigital.politicaltalks.factory.TestDataFactory;
 import com.fashiondigital.politicaltalks.model.TalkModel;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
@@ -19,7 +21,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 public class TalksServiceTest {
 
 	String testCsvPath = "talks_01.csv";
-	
+	String testRawData = ",,,";
 	String testUrl = "https://political.talks.com";
 	
 	@Mock
@@ -32,38 +34,39 @@ public class TalksServiceTest {
 	private TypeMap<TalkDto, TalkModel> mapperMock;
 	
 	@InjectMocks
-	private TalksService talksService;
+	TalksServiceImpl sut;
 	
 	@Test
-	public void talksService_Request_ReturnsTalksDto() throws IOException, CsvRequiredFieldEmptyException {
+	public void talksService_Request_EqualsTalkDtos() throws IOException, CsvRequiredFieldEmptyException, InterruptedException, ExecutionException {
 		
 		// Arrange
-		var expectedResult = createDataForEvaluation();
-		when(restServiceMock.requestRawString(testUrl)).thenReturn(testCsvPath);
+		var expectedResult = TestDataFactory.createDtoDataForEvaluation();
+		when(restServiceMock.requestRawString(testUrl)).thenReturn(testRawData);
 		when(csvServiceMock.readCsv(testCsvPath)).thenReturn(expectedResult);
-		
-		var sut = new TalksServiceImpl(restServiceMock, csvServiceMock, mapperMock);
+		when(csvServiceMock.writeCsv("tmp", testRawData)).thenReturn(testCsvPath);
 		
 		// Act
-		var future = sut.request(testUrl);
-		future.thenAcceptAsync(talksDto -> {
-			// Assert
-			assertEquals(expectedResult, talksDto);
-		});
+		var result = sut.request(testUrl);
+		
+		// Assert
+		assertEquals(expectedResult, result.get());
 	}
 	
-	private List<TalkDto> createDataForEvaluation() {
-		return
-		Arrays.asList(
-			new TalkDto("Alexander Abel", "Bildungspolitik", "2012-10-30", 5310),	
-			new TalkDto("Bernhard Belling,", "Kohlesubventionen,", "2012-11-05", 1210),	
-			new TalkDto("Caesare Collins", "Kohlesubventionen", "2012-11-06", 1119),	
-			new TalkDto("Alexander Abel", "Innere Sicherheit", "2012-12-11", 911),
-			new TalkDto("Max Mustermann", "Innere Sicherheit", "2014-12-11", 10),
-			new TalkDto("Julian Mauer", "Kohlesubventionen", "2014-01-11", 501),
-			new TalkDto("Max Mustermann", "Kohlesubventionen", "2015-01-04", 20),
-			new TalkDto("Julian Mauer", "Finanzwesen", "2015-01-11", 120),
-			new TalkDto("Max Mustermann", "Kohlesubventionen", "2016-01-09", 30)
-		);
+	@Test
+	public void talksService_ConvertToModels_NotNull() {
+		
+		// Arrange
+		var talkDto = new TalkDto();
+		var talkDtos = Arrays.asList(talkDto);
+		var expectedResult = new TalkModel();
+		
+		when(mapperMock.map(talkDto)).thenReturn(expectedResult);
+		
+		// Act
+		var result = sut.convertToModels(talkDtos);
+		
+		// Assert
+		assertThat(result).isNotEmpty();
 	}
+	
 }

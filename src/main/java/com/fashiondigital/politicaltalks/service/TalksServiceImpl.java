@@ -15,6 +15,9 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * {@inheritDoc}
+ */
 @Service
 @RequiredArgsConstructor
 public class TalksServiceImpl implements TalksService {
@@ -23,6 +26,9 @@ public class TalksServiceImpl implements TalksService {
 	private final CsvService<TalkDto> csvService;
 	private final TypeMap<TalkDto, TalkModel> mapper;
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Async("asyncExecutor")
 	public CompletableFuture<List<TalkDto>> request(String url) throws IOException, CsvRequiredFieldEmptyException {
 		var rawTalkData = restService.requestRawString(url);
@@ -31,6 +37,9 @@ public class TalksServiceImpl implements TalksService {
 		return CompletableFuture.completedFuture(listOfTalks);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<TalkModel> convertToModels(List<TalkDto> talks) {
 		return
 			talks

@@ -16,6 +16,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
 
+	// TODO Improve error handling here
+	
 	@ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
         var error = new RestApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Server error", ex);
